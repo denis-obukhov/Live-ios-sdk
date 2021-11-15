@@ -12,13 +12,13 @@ import Networking
 extension RestApi: LiveStreamRepository {
 
 	public func getLiveStreams() -> AnyPublisher<[LiveStream], Error> {
-		return get("/v1/episodes").map { (page: JSONPage<JSONLiveStream>) in
+		return get("/live-labs").map { (page: JSONPage<JSONLiveStream>) in
 			return page.results.map { $0.toLiveStream() }
 		}.eraseToAnyPublisher()
 	}
 
 	public func getCurrentLiveStream() -> AnyPublisher<LiveStream?, Error> {
-		return get("/v1/episodes/current")
+		return get("/live-labs/current")
 			.map { (page: JSONPage<JSONLiveStream>) in
 				return page.results.map { $0.toLiveStream() }
 			}
@@ -27,7 +27,7 @@ extension RestApi: LiveStreamRepository {
 	}
 
 	public func getCurrentLiveStream(from showId: String) -> AnyPublisher<LiveStream?, Error> {
-		return get("/v1/episodes/current", params: ["show_id" : showId ])
+		return get("/live-labs/current", params: ["show_id" : showId ])
 			.map { (page: JSONPage<JSONLiveStream>) in
 				return page.results.map { $0.toLiveStream() }
 			}
@@ -40,7 +40,7 @@ extension RestApi: LiveStreamRepository {
 	}
 
 	public func fetchLiveStream(liveStreamId: String) -> AnyPublisher<LiveStream, Error> {
-		return get("/v1/episodes/\(liveStreamId)").map { (jsonLiveStream: JSONLiveStream) in
+		return get("/live-labs/\(liveStreamId)").map { (jsonLiveStream: JSONLiveStream) in
 			return jsonLiveStream.toLiveStream()
 		}.eraseToAnyPublisher()
 	}
@@ -72,7 +72,7 @@ extension RestApi: LiveStreamRepository {
 			formatter.dateFormat = "yyyy-MM-dd"
 			dateString = formatter.string(from: date) + "T00:00:00"
 		}
-		var path = "/v1/episodes?starting_at=\(dateString)"
+		var path = "/live-labs?starting_at=\(dateString)"
 		if let daysAhead = daysAhead {
 			path += "&days_ahead=\(daysAhead)"
 		}
@@ -91,7 +91,7 @@ extension RestApi: LiveStreamRepository {
 	}
 
 	public func fetchBroadcastUrl(for liveStream: LiveStream) -> AnyPublisher<LiveStream, Error> {
-		get("/v1/episodes/\(liveStream.id)/watch").map { (response: WatchJSONResponse) in
+		get("/live-labs/\(liveStream.id)/watch").map { (response: WatchJSONResponse) in
 			let streamType = response.stream_type
 			var newLiveStream = liveStream
 
