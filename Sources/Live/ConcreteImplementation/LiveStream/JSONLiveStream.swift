@@ -22,8 +22,9 @@ struct JSONLiveStream: Decodable {
 	let endDate: String?
 	let waitingRoomDescription: String
 	let isPushNotificationReminderSet: Bool
-
 	let vodId: String?
+	let shareLink: String?
+	let isPremium: Bool?
 
 	enum CodingKeys: String, CodingKey {
 		case id
@@ -39,6 +40,8 @@ struct JSONLiveStream: Decodable {
 		case streaming_info
 		case pre_recorded_video
 		case is_push_notification_enabled
+		case share_link
+		case is_premium
 	}
 
 	enum StreamingInfoKeys: String, CodingKey {
@@ -72,6 +75,8 @@ struct JSONLiveStream: Decodable {
 			broadcastUrlString = asset.asset_url
 		}
 		isPushNotificationReminderSet = try values.decodeIfPresent(Bool.self, forKey: .is_push_notification_enabled) ?? false
+		shareLink = try values.decodeIfPresent(String.self, forKey: .share_link)
+		isPremium = try values.decodeIfPresent(Bool.self, forKey: .is_premium)
 	}
 }
 
@@ -90,7 +95,9 @@ extension JSONLiveStream {
 											startDate: startDate.toRestApiDate() ?? Date(),
 											endDate: endDate?.toRestApiDate() ?? Date(),
 											waitingRomDescription: waitingRoomDescription,
-											isPushNotificationReminderSet: isPushNotificationReminderSet)
+											isPushNotificationReminderSet: isPushNotificationReminderSet,
+											shareLink: shareLink,
+											isPremium: isPremium)
 		liveStream.vodId = vodId
 		return liveStream
 	}
